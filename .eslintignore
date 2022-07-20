@@ -10,3 +10,4 @@ jest.config.js
 config.js
 renovate.json
 tsconfig.json
+**/amplify/*
