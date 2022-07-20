@@ -83,7 +83,8 @@ module.exports = {
     'import/newline-after-import': 'error',
     'import/no-default-export': 'error', // default-exportを禁止する
     '@typescript-eslint/no-explicit-any': 'error', // Any型を禁止にする
-    '@typescript-eslint/explicit-module-boundary-types': 'error', // 返り値の定義を必須にする
+    // '@typescript-eslint/explicit-module-boundary-types': 'error', // 返り値の定義を必須にする
+    '@typescript-eslint/explicit-module-boundary-types': 'off', // 返り値の定義を必須にする
     '@typescript-eslint/consistent-type-imports': [
       'error',
       { prefer: 'type-imports' },
@@ -108,12 +109,6 @@ module.exports = {
     {
       files: ['src/pages/**/*.tsx', 'src/pages/api/**/*.ts'], // pagesのdefault exportは仕方ないので除外
       rules: { 'import/no-default-export': 'off' },
-    },
-    {
-      files: ['**/*.tsx'], // componentの戻り値の型定義の記述は必須にしない
-      rules: {
-        '@typescript-eslint/explicit-module-boundary-types': 'off',
-      },
     },
   ],
 }

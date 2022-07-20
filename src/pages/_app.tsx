@@ -21,13 +21,13 @@ const Main = ({ children }: MainProps) => {
   const { signOut } = useAuthenticator()
 
   return (
-    <div className='m-0 h-0 font-sans box-border'>
-      <select data-choose-theme className='select select-primary'>
+    <div className={'m-0 h-0 font-sans box-border'}>
+      <select data-choose-theme className={'select select-primary'}>
         {/* <option value=''>Default</option> */}
-        <option value='light'>Light</option>
-        <option value='dark'>Dark</option>
+        <option value={'light'}>Light</option>
+        <option value={'dark'}>Dark</option>
       </select>
-      <button className='btn btn-primary' onClick={signOut}>
+      <button className={'btn btn-primary'} onClick={signOut}>
         SignOut
       </button>
       {children}
@@ -42,13 +42,11 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <div>
       <Authenticator>
-        {() => {
-          return (
-            <Main>
-              <Component {...pageProps} />
-            </Main>
-          )
-        }}
+        {() => (
+          <Main>
+            <Component {...pageProps} />
+          </Main>
+        )}
       </Authenticator>
     </div>
   )
