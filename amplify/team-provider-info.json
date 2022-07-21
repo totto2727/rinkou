@@ -20,16 +20,16 @@
       "function": {
         "rinkou694283edDefineAuthChallenge": {
           "deploymentBucketName": "amplify-rinkou-dev-152135-deployment",
-          "s3Key": "amplify-builds/rinkou694283edDefineAuthChallenge-766e30654233684a784e-build.zip"
+          "s3Key": "amplify-builds/rinkou694283edDefineAuthChallenge-7067626f416f4970615a-build.zip"
         },
         "rinkou694283edCreateAuthChallenge": {
           "deploymentBucketName": "amplify-rinkou-dev-152135-deployment",
-          "s3Key": "amplify-builds/rinkou694283edCreateAuthChallenge-7238756a754c4732444a-build.zip"
+          "s3Key": "amplify-builds/rinkou694283edCreateAuthChallenge-596c466e6e51474f7035-build.zip"
         },
         "rinkoub0680ea1PostConfirmation": {
           "GROUP": "free",
           "deploymentBucketName": "amplify-rinkou-dev-152135-deployment",
-          "s3Key": "amplify-builds/rinkoub0680ea1PostConfirmation-75525557334364707975-build.zip"
+          "s3Key": "amplify-builds/rinkoub0680ea1PostConfirmation-56503479554849655670-build.zip"
         }
       }
     }
