@@ -35,17 +35,25 @@ const Genre: NextPage = () => {
     name: '',
   })
 
+  console.log(data)
   if (!data) {
     return <div>Loading</div>
   }
 
   const requiredStockpile = requireStockpilesDict[genre]
-  const stockpile = data[genre] ?? {
-    genre: genre,
-    requiredName: requiredStockpile.requireName,
-    items: [],
-  }
+  const stockpile = data[genre]
   if (!stockpile) {
+    mutate(
+      {
+        ...data,
+        [genre]: {
+          genre: genre,
+          requiredName: requiredStockpile.requireName,
+          items: [],
+        },
+      },
+      false,
+    )
     return <div>Loading</div>
   }
 
