@@ -34,6 +34,11 @@ const Main = ({ children }: MainProps) => {
               </Link>
             </div>
             <div className={'flex gap-8'}>
+              <Link href={'/families'}>
+                <a>
+                  <button className={'btn btn-primary'}>家族構成</button>
+                </a>
+              </Link>
               <select data-choose-theme className={'select select-primary'}>
                 <option value={'light'}>Light</option>
                 <option value={'dark'}>Dark</option>

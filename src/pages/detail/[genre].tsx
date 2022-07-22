@@ -1,30 +1,16 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { requireStockpilesDict } from '@/data/requiredStockpiles'
-import { stockpileGet } from '@/data/stockpileGet'
-import { useAPI, useAxios } from '@/hooks/useAPI'
-
-type Stockpile = {
-  items: { term: string; amount: number; name?: string }[]
-  genre: string
-  requiredName: boolean
-}
-
-const useStockpiles = () =>
-  useAPI<Record<string, Stockpile>>('/stockpilesdict', async (header) => {
-    const stockpiles = stockpileGet
-    const stockpileDict: Record<string, Stockpile> = {}
-    stockpiles.forEach((x) => (stockpileDict[x.genre] = x))
-    return stockpileDict
-  })
+import { requiredStockpileDict } from '@/data/requiredStockpiles'
+import { useAPIGateway } from '@/hooks/useAPIGateway'
+import { useStockpileRecord } from '@/hooks/useStockpileMap'
 
 const Genre: NextPage = () => {
   const router = useRouter()
-  const genre = router.query.genre as string
-  const axios = useAxios()
-  const { data, mutate } = useStockpiles()
+  const genre = router.query.genre as string | undefined
+  const { apiGateway } = useAPIGateway()
+  const { data: stockpileRecord, mutate } = useStockpileRecord()
   const [formValues, setFormValue] = useState<{
     term: string
     amount: number
@@ -35,48 +21,82 @@ const Genre: NextPage = () => {
     name: '',
   })
 
-  console.log(data)
-  if (!data) {
-    return <div>Loading</div>
-  }
+  const stockpile = stockpileRecord ? stockpileRecord[genre ?? ''] : undefined
+  const requiredStockpile = requiredStockpileDict[genre ?? '']
+  console.log(stockpile)
 
-  const requiredStockpile = requireStockpilesDict[genre]
-  const stockpile = data[genre]
-  if (!stockpile) {
+  const isLoading =
+    !stockpileRecord ||
+    !genre ||
+    !apiGateway ||
+    !stockpile ||
+    !requiredStockpile
+
+  useEffect(() => {
+    if (!genre || !stockpileRecord || stockpile) {
+      return
+    }
+
     mutate(
-      {
-        ...data,
-        [genre]: {
-          genre: genre,
-          requiredName: requiredStockpile.requireName,
-          items: [],
-        },
+      async () => {
+        return {
+          ...stockpileRecord,
+          [genre]: {
+            genre: genre,
+            items: [],
+          },
+        }
       },
-      false,
+      {
+        optimisticData: {
+          ...stockpileRecord,
+          [genre]: {
+            genre: genre,
+            items: [],
+          },
+        },
+        revalidate: false,
+      },
     )
+  }, [genre, mutate, stockpile, stockpileRecord])
+
+  if (isLoading) {
     return <div>Loading</div>
   }
 
   const rows = stockpile.items.map((x, i) => (
     <tr key={i} className={'text-right'}>
-      {stockpile.requiredName ? <td>{x.name}</td> : undefined}
+      {requiredStockpile.requireName ? <td>{x.name}</td> : undefined}
       <td>{`${x.amount}${requiredStockpile.unit}`}</td>
       <td>{x.term.replaceAll('-', '/')}</td>
       <td>
         <button
           className={'btn btn-primary'}
-          onClick={async () => {
+          onClick={() => {
             mutate(
-              {
-                ...data,
-                [genre]: {
-                  ...data[genre],
-                  items: stockpile.items.filter((_, j) => j != i),
-                },
+              async () => {
+                // TODO stockpiles DELETE
+                // await axios.post('test', formValues)
+                return {
+                  ...stockpileRecord,
+                  [genre]: {
+                    genre,
+                    items: stockpile.items.filter((_, j) => j != i),
+                  },
+                }
               },
-              false,
+              {
+                optimisticData: {
+                  ...stockpileRecord,
+                  [genre]: {
+                    genre,
+                    items: stockpile.items.filter((_, j) => j != i),
+                  },
+                },
+                // TODO true
+                revalidate: false,
+              },
             )
-            await axios.post('test', formValues)
           }}
         >
           削除
@@ -91,7 +111,7 @@ const Genre: NextPage = () => {
         <table className={'table w-full'}>
           <thead>
             <tr>
-              {stockpile.requiredName ? <th>名前</th> : undefined}
+              {requiredStockpile.requireName ? <th>名前</th> : undefined}
               <th>備蓄量</th>
               <th>期限</th>
               <th />
@@ -101,7 +121,7 @@ const Genre: NextPage = () => {
             {[
               ...rows,
               <tr key={'form'} className={'text-right'}>
-                {stockpile.requiredName ? (
+                {requiredStockpile.requireName ? (
                   <td>
                     <input
                       type={'text'}
@@ -143,28 +163,47 @@ const Genre: NextPage = () => {
                 <td>
                   <button
                     className={'btn btn-primary'}
-                    onClick={async () => {
+                    onClick={() => {
                       mutate(
-                        {
-                          ...data,
-                          [genre]: {
-                            ...data[genre],
-                            items: [...data[genre].items, formValues],
-                          },
+                        async () => {
+                          // TODO stockpiles POST
+                          // await axios.post('test', formValues)
+                          return {
+                            ...stockpileRecord,
+                            [genre]: {
+                              genre,
+                              items: [
+                                ...(stockpileRecord[genre]?.items ?? []),
+                                formValues,
+                              ],
+                            },
+                          }
                         },
-                        false,
+                        {
+                          optimisticData: {
+                            ...stockpileRecord,
+                            [genre]: {
+                              genre,
+                              items: [
+                                ...(stockpileRecord[genre]?.items ?? []),
+                                formValues,
+                              ],
+                            },
+                          },
+                          // TODO true
+                          revalidate: false,
+                        },
                       )
                       setFormValue({
                         term: '',
                         amount: 0,
                         name: '',
                       })
-                      await axios.post('test', formValues)
                     }}
                     disabled={
                       !formValues.term.length ||
                       formValues.amount <= 0 ||
-                      (data.requiredName && !formValues.name)
+                      (requiredStockpile.requireName && !formValues.name)
                     }
                   >
                     追加

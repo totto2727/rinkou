@@ -1,4 +1,4 @@
-type Stockpile = {
+type RequiredStockpiles = {
   name: string
   amountRequired: number
   unit: string
@@ -6,7 +6,7 @@ type Stockpile = {
   requireName: boolean
 }
 
-export const requireStockpiles: Stockpile[] = [
+export const requiredStockpiles: RequiredStockpiles[] = [
   {
     name: '水',
     amountRequired: 9,
@@ -128,6 +128,6 @@ export const requireStockpiles: Stockpile[] = [
   },
 ]
 
-const requireStockpilesDict: Record<string, Stockpile> = {}
-requireStockpiles.forEach((x) => (requireStockpilesDict[x.name] = x))
-export { requireStockpilesDict }
+const requiredStockpileDict: Partial<Record<string, RequiredStockpiles>> = {}
+requiredStockpiles.forEach((x) => (requiredStockpileDict[x.name] = x))
+export { requiredStockpileDict }

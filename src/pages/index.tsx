@@ -1,43 +1,33 @@
 import type { NextPage } from 'next'
 import Link from 'next/link'
 
-import { familiesGet } from '@/data/familiesGet'
-import { requireStockpiles } from '@/data/requiredStockpiles'
-import { stockpileGet } from '@/data/stockpileGet'
-import { useAPI } from '@/hooks/useAPI'
-
-type Stockpile = {
-  items: { term: string; amount: number; name?: string }[]
-  genre: string
-  requiredName: boolean
-}
-const useStockpiles = () =>
-  useAPI<Stockpile[]>('/stockpiles', async (header) => stockpileGet)
-
-type Families = { adult: number }
-const useFamilies = () =>
-  useAPI<Families>('/user/setting/families', async (header) => familiesGet)
+import { requiredStockpiles } from '@/data/requiredStockpiles'
+import { useFamilies } from '@/hooks/useFamilies'
+import { useStockpileRecord } from '@/hooks/useStockpileMap'
 
 const Index: NextPage = () => {
-  const { data: stockpiles } = useStockpiles()
+  const { data: stockpileRecord } = useStockpileRecord()
   const { data: families } = useFamilies()
-  if (!stockpiles || !families) {
+  if (!stockpileRecord || !families) {
     return <div>Loading</div>
   }
 
-  const stockpileDict: Partial<Record<string, Omit<Stockpile, 'genre'>>> = {}
-  stockpiles.forEach((x) => (stockpileDict[x.genre] = x))
-
-  const cards = requireStockpiles.map((x) => {
-    const required = x.amountRequired * families.adult
-    const stock =
-      stockpileDict[x.name]?.items.reduce((y, z) => y + z.amount, 0) ?? 0
+  const cards = requiredStockpiles.map((requiredStockpile) => {
+    const required = requiredStockpile.amountRequired * families.adult
+    const totalAmount =
+      stockpileRecord[requiredStockpile.name]?.items.reduce(
+        (x, stockpile) => x + stockpile.amount,
+        0,
+      ) ?? 0
     return (
-      <Link href={`detail/${x.name}`} key={x.name}>
+      <Link
+        href={`detail/${requiredStockpile.name}`}
+        key={requiredStockpile.name}
+      >
         <a>
           <div
             className={`card shadow ${
-              stock < required
+              totalAmount < required
                 ? 'bg-error text-error-content'
                 : 'bg-info text-primary-content'
             } hover:cursor-pointer`}
@@ -48,15 +38,15 @@ const Index: NextPage = () => {
                   'card-title whitespace-nowrap text-ellipsis overflow-hidden'
                 }
               >
-                {x.name}
+                {requiredStockpile.name}
               </div>
               <div>
                 <div
                   className={'whitespace-nowrap text-ellipsis'}
-                >{`必要な量: ${required}${x.unit}`}</div>
+                >{`必要な量: ${required}${requiredStockpile.unit}`}</div>
                 <div
                   className={'whitespace-nowrap text-ellipsis'}
-                >{`備蓄量: ${stock}${x.unit}`}</div>
+                >{`備蓄量: ${totalAmount}${requiredStockpile.unit}`}</div>
               </div>
             </div>
           </div>
