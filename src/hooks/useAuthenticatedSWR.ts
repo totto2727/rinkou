@@ -15,6 +15,8 @@ export const useAuthenticatedSWR = <T>(
   const { user } = useAuthenticator()
   const [jwt, setJwt] = useState<string | null>(null)
 
+  console.log(jwt)
+
   useEffect(() => {
     const session = user.getSignInUserSession()
     if (!session) return
