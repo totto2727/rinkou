@@ -1,35 +1,39 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-rinkou-dev-152135-authRole",
-      "UnauthRoleArn": "arn:aws:iam::233428486694:role/amplify-rinkou-dev-152135-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::233428486694:role/amplify-rinkou-dev-152135-authRole",
+      "AuthRoleName": "amplify-rinkou-dev-203437-authRole",
+      "UnauthRoleArn": "arn:aws:iam::233428486694:role/amplify-rinkou-dev-203437-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::233428486694:role/amplify-rinkou-dev-203437-authRole",
       "Region": "ap-northeast-1",
-      "DeploymentBucketName": "amplify-rinkou-dev-152135-deployment",
-      "UnauthRoleName": "amplify-rinkou-dev-152135-unauthRole",
-      "StackName": "amplify-rinkou-dev-152135",
-      "StackId": "arn:aws:cloudformation:ap-northeast-1:233428486694:stack/amplify-rinkou-dev-152135/35a0f8f0-07f4-11ed-9522-0adb36239cfb",
-      "AmplifyAppId": "d30bqa3au2pndi",
-      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-rinkou-dev-152135-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+      "DeploymentBucketName": "amplify-rinkou-dev-203437-deployment",
+      "UnauthRoleName": "amplify-rinkou-dev-203437-unauthRole",
+      "StackName": "amplify-rinkou-dev-203437",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:233428486694:stack/amplify-rinkou-dev-203437/6fc39fe0-0a7b-11ed-bd43-0e2be100531f",
+      "AmplifyAppId": "d2772avkgzrhhk",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-rinkou-dev-203437-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
     },
     "categories": {
       "auth": {
-        "rinkou694283ed": {},
+        "rinkouauth": {},
         "rinkoub0680ea1": {}
       },
       "function": {
+        "rinkouauthPostConfirmation": {
+          "GROUP": "free",
+          "deploymentBucketName": "amplify-rinkou-dev-203437-deployment",
+          "s3Key": "amplify-builds/rinkouauthPostConfirmation-6b776261586163644336-build.zip"
+        },
         "rinkou694283edDefineAuthChallenge": {
-          "deploymentBucketName": "amplify-rinkou-dev-152135-deployment",
-          "s3Key": "amplify-builds/rinkou694283edDefineAuthChallenge-7067626f416f4970615a-build.zip"
+          "deploymentBucketName": "amplify-rinkou-dev-203437-deployment",
+          "s3Key": "amplify-builds/rinkou694283edDefineAuthChallenge-4b4e4477425341412f53-build.zip"
         },
         "rinkou694283edCreateAuthChallenge": {
-          "deploymentBucketName": "amplify-rinkou-dev-152135-deployment",
-          "s3Key": "amplify-builds/rinkou694283edCreateAuthChallenge-596c466e6e51474f7035-build.zip"
+          "deploymentBucketName": "amplify-rinkou-dev-203437-deployment",
+          "s3Key": "amplify-builds/rinkou694283edCreateAuthChallenge-6c72424c316d55746c73-build.zip"
         },
         "rinkoub0680ea1PostConfirmation": {
-          "GROUP": "free",
-          "deploymentBucketName": "amplify-rinkou-dev-152135-deployment",
-          "s3Key": "amplify-builds/rinkoub0680ea1PostConfirmation-56503479554849655670-build.zip"
+          "deploymentBucketName": "amplify-rinkou-dev-203437-deployment",
+          "s3Key": "amplify-builds/rinkoub0680ea1PostConfirmation-516b4b514c676f676771-build.zip"
         }
       }
     }

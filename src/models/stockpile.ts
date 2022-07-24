@@ -1,5 +1,5 @@
-import { stockpileGet } from '@/data/stockpileGet'
 import type { Header } from '@/libs/apiGateway'
+import { apiGateway } from '@/libs/apiGateway'
 
 export type Stockpile = {
   items: { term: string; amount: number; name?: string }[]
@@ -7,9 +7,10 @@ export type Stockpile = {
 }
 
 export const getStockpiles = async (header: Header) => {
-  const stockpiles = stockpileGet
-  // TODO stockpiles GET
-  return stockpiles
+  const res = await apiGateway.get<Stockpile[]>('stockpiles', {
+    headers: header,
+  })
+  return res.data
 }
 
 export const getStockpileRecord = async (header: Header) => {

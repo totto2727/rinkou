@@ -1,11 +1,10 @@
 import type { Header } from '@/libs/apiGateway'
+import { apiGateway } from '@/libs/apiGateway'
 
 type Family = 'adult'
 type Families = Record<Family, number>
 
-// TODO families GET
 export const getFamilies = async (header: Header): Promise<Families> => {
-  return {
-    adult: 3,
-  }
+  const res = await apiGateway.get<Families>('families', { headers: header })
+  return res.data
 }

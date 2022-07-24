@@ -1,10 +1,17 @@
+import { useAuthenticator } from '@aws-amplify/ui-react'
 import type { NextPage } from 'next'
 import type { ChangeEventHandler, MouseEventHandler } from 'react'
 
+import { Families } from '@/data/familiesGet'
 import { useFamilies } from '@/hooks/useFamilies'
+import { apiGateway } from '@/libs/apiGateway'
 
 const Families: NextPage = () => {
   const { data, mutate } = useFamilies()
+  const { user } = useAuthenticator()
+  if (!user) {
+    ;<div>loading</div>
+  }
 
   const onChangeAdult: ChangeEventHandler<HTMLInputElement> = (e) =>
     mutate(async () => {
@@ -15,9 +22,18 @@ const Families: NextPage = () => {
     mutate(
       async () => {
         console.log(data)
-        return data
+        const res = await apiGateway.post<Families>('families', data, {
+          headers: {
+            Authorization: user
+              .getSignInUserSession()
+              ?.getIdToken()
+              .getJwtToken() as string,
+          },
+        })
+        return res.data
       },
-      { optimisticData: data },
+      // TODO
+      { optimisticData: data, revalidate: false },
     )
   }
 

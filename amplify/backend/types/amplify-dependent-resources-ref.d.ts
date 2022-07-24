@@ -29,11 +29,5 @@ export type AmplifyDependentResourcesAttributes = {
       LambdaExecutionRole: 'string'
       Region: 'string'
     }
-    rinkoujwtverify: {
-      Name: 'string'
-      Arn: 'string'
-      Region: 'string'
-      LambdaExecutionRole: 'string'
-    }
   }
 }

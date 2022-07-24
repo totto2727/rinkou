@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { requiredStockpileDict } from '@/data/requiredStockpiles'
 import { useAPIGateway } from '@/hooks/useAPIGateway'
 import { useStockpileRecord } from '@/hooks/useStockpileMap'
+import type { Stockpile } from '@/models/stockpile'
 
 const Genre: NextPage = () => {
   const router = useRouter()
@@ -23,7 +24,6 @@ const Genre: NextPage = () => {
 
   const stockpile = stockpileRecord ? stockpileRecord[genre ?? ''] : undefined
   const requiredStockpile = requiredStockpileDict[genre ?? '']
-  console.log(stockpile)
 
   const isLoading =
     !stockpileRecord ||
@@ -48,13 +48,6 @@ const Genre: NextPage = () => {
         }
       },
       {
-        optimisticData: {
-          ...stockpileRecord,
-          [genre]: {
-            genre: genre,
-            items: [],
-          },
-        },
         revalidate: false,
       },
     )
@@ -62,6 +55,66 @@ const Genre: NextPage = () => {
 
   if (isLoading) {
     return <div>Loading</div>
+  }
+
+  const createHandlerClickDelete = (i: number) => () =>
+    mutate(
+      async () => {
+        const res = await apiGateway.delete<Stockpile>('stockpiles', {
+          data: {
+            genre,
+            items: stockpile.items.filter((_, j) => j != i),
+          },
+        })
+        console.log(res)
+        return {
+          ...stockpileRecord,
+          [res.data.genre]: res.data,
+        }
+      },
+      {
+        optimisticData: {
+          ...stockpileRecord,
+          [genre]: {
+            genre,
+            items: stockpile.items.filter((_, j) => j != i),
+          },
+        },
+        revalidate: true,
+      },
+    )
+
+  const newItem = {
+    ...formValues,
+    genre,
+  }
+  const newdata = {
+    ...stockpileRecord,
+    [genre]: {
+      genre,
+      items: [...(stockpileRecord[genre]?.items ?? []), formValues],
+    },
+  }
+
+  const onClickPost = () => {
+    mutate(
+      async () => {
+        const res = await apiGateway.post<Stockpile>('stockpiles', newItem)
+        return {
+          ...stockpileRecord,
+          [res.data.genre]: res.data,
+        }
+      },
+      {
+        optimisticData: newdata,
+        revalidate: true,
+      },
+    )
+    setFormValue({
+      term: '',
+      amount: 0,
+      name: '',
+    })
   }
 
   const rows = stockpile.items.map((x, i) => (
@@ -72,32 +125,7 @@ const Genre: NextPage = () => {
       <td>
         <button
           className={'btn btn-primary'}
-          onClick={() => {
-            mutate(
-              async () => {
-                // TODO stockpiles DELETE
-                // await axios.post('test', formValues)
-                return {
-                  ...stockpileRecord,
-                  [genre]: {
-                    genre,
-                    items: stockpile.items.filter((_, j) => j != i),
-                  },
-                }
-              },
-              {
-                optimisticData: {
-                  ...stockpileRecord,
-                  [genre]: {
-                    genre,
-                    items: stockpile.items.filter((_, j) => j != i),
-                  },
-                },
-                // TODO true
-                revalidate: false,
-              },
-            )
-          }}
+          onClick={createHandlerClickDelete(i)}
         >
           削除
         </button>
@@ -163,43 +191,7 @@ const Genre: NextPage = () => {
                 <td>
                   <button
                     className={'btn btn-primary'}
-                    onClick={() => {
-                      mutate(
-                        async () => {
-                          // TODO stockpiles POST
-                          // await axios.post('test', formValues)
-                          return {
-                            ...stockpileRecord,
-                            [genre]: {
-                              genre,
-                              items: [
-                                ...(stockpileRecord[genre]?.items ?? []),
-                                formValues,
-                              ],
-                            },
-                          }
-                        },
-                        {
-                          optimisticData: {
-                            ...stockpileRecord,
-                            [genre]: {
-                              genre,
-                              items: [
-                                ...(stockpileRecord[genre]?.items ?? []),
-                                formValues,
-                              ],
-                            },
-                          },
-                          // TODO true
-                          revalidate: false,
-                        },
-                      )
-                      setFormValue({
-                        term: '',
-                        amount: 0,
-                        name: '',
-                      })
-                    }}
+                    onClick={onClickPost}
                     disabled={
                       !formValues.term.length ||
                       formValues.amount <= 0 ||
